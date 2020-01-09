@@ -10,7 +10,7 @@ The file structure within the src folder of a package consists of the following 
  - Contains images and styles. Styles are built up using Sass.
 - `components`
  - Contains the display layer of the application.  
-   \* The `layout` folder in this step provides some files that we will be working with in the below exercises. It typically doesn't exist.
+  _The `layout` folder within `components` in this step provides some files that we will be working with in the below exercises. It typically doesn't exist._
 - `redux`
  - Contains the sagas and models that handle fetching and storing the data used by the package.
 - `utils` or `helpers` (optional folder)
@@ -40,7 +40,7 @@ The app package will define a `Header` component that will be used by all packag
 
 **Add a header to the App layout.** This will be the header that is used by all packages.
 
-1.  Import the provided Header component and wrap the App content with the following classes. This should render a header bar with the word Header in it.
+1.  In `App.js`, import the provided `Header` component and wrap the `App` content with the following classes. This should render a header bar with the word 'Header' in it.
 
 ```
 import { Header } from './components/layout/Header';
@@ -49,15 +49,15 @@ import { Header } from './components/layout/Header';
   <div className="app-header">
     <Header />
   </div>
-  <div class="app-body">
-    <div class="app-main-container">
+  <div className="app-body">
+    <div className="app-main-container">
       // Main Content Goes Here
     </div>
   </div>
 </div>
 ```
 
-2.  Update the Header component to add a dropdown menu for the kapp links. Show the current kapp name in the header, or 'Home' if there is no current kapp.
+2.  In `Header.js`, update the component to add a dropdown menu for the kapp links. Show the current kapp name in the header, or 'Home' if there is no current kapp.
 
 - Use recompose to add state for tracking when the dropdown menu is open, and a handler for toggling the menu.
 
@@ -108,9 +108,11 @@ withHandlers({ kappDropdownToggle: props => () => props.setKappDropdownOpen(open
 
 **Add a sidebar to the App layout.** We will later dynamically load a sidebar based on the current package being displayed.
 
-1.  Import the provided Sidebar and add it wrapped in the below class as the first child of `<div class="app-body">`. This should render a sidebar on the left side with links to the kapps.
+1.  In `App.js`, import the provided `Sidebar` component and add it wrapped in the below class as the first child of `<div className="app-body">`. This should render a sidebar on the left side with links to the kapps.
 
 ```
+import { Sidebar } from './components/layout/Sidebar';
+
 <div className="app-sidebar-container">
   <Sidebar />
 </div>
@@ -118,7 +120,7 @@ withHandlers({ kappDropdownToggle: props => () => props.setKappDropdownOpen(open
 
 2.  Now we need to add the ability to toggle the sidebar open and closed. The bundle already has state and an action for keeping track of the sidebar inside the `packages/app/src/redux/modules/layout.js` file. We'll need to add a toggle button in the header and add the appropriate classes to show or hide the sidebar based on the stored state value.
 
-- Add the `sidebarOpen` state value within `mapStateToProps`.
+- In `App.js`, add the `sidebarOpen` state value within `mapStateToProps`.
 
 ```
 export const mapStateToProps = state => ({
@@ -127,7 +129,7 @@ export const mapStateToProps = state => ({
 )}
 ```
 
-- Import the layout actions and add the `setSidebarOpen` action within `mapDispatchToProps`.
+- In `App.js`, import the layout actions and add the `setSidebarOpen` action within `mapDispatchToProps`.
 
 ```
 import { actions as layoutActions } from './redux/modules/layout';
@@ -138,7 +140,7 @@ export const mapDispatchToProps = {
 };
 ```
 
-- Add a conditional class to `<div class="app-body">` to either show or hide the sidebar based on the state.
+- In `App.js`, add a conditional class to `<div className="app-body">` to either show or hide the sidebar based on the state.
 
 ```
 <div className={`app-body ${props.sidebarOpen ? 'open-sidebar' : 'closed-sidebar'}`}>
@@ -150,10 +152,10 @@ export const mapDispatchToProps = {
 <Header toggleSidebar={() => props.setSidebarOpen(!props.sidebarOpen)} />
 ```
 
-- Update `Header.js` to add a toggle button as the first child of `<Nav className="nav-header">`.
+- In `Header.js`, add a toggle button as the first child of `<Nav className="nav-header">`.
 
 ```
-NavItem id="header-sidebar-toggle">
+<NavItem id="header-sidebar-toggle">
   <NavLink
     className="drawer-button"
     role="button"
@@ -164,3 +166,75 @@ NavItem id="header-sidebar-toggle">
   </NavLink>
 </NavItem>
 ```
+
+---
+
+#### Exercise 3
+
+**Add an `AppProvider` component to the app package to handle its content.**
+
+1.  In `App.js`, import the provided `AppProvider` component and replace the content within `<div className="app-main-container">` with just the `AppProvider`. This will replace the main body of the page with the AppProvider.
+
+```
+import { AppProvider } from './components/layout/AppProvider';
+
+<div className="app-main-container">
+  <AppProvider />
+</div>
+```
+
+_The above works for replacing the body content, but what we want is to also replace the sidebar content, but keep the sidebar functionality and layout defined within the app package. We will accomplish this by passing a render function to the `AppProvider` which will expect to be called and passed the main content and the sidebar content as parameters._
+
+2.  In `App.js`, update the `App` component to render the `AppProvider`, passing in a `render` prop that's a function. This function will expect to be passed a JS object with the properties `main` and `sidebar`, and will then render the values of those properties within the appropriate sections of the layout.
+
+```
+<AppProvider
+  render={({ main, sidebar }) => (
+    <div className="app-wrapper">
+      <div className="app-header">
+        <Header
+          toggleSidebar={() => props.setSidebarOpen(!props.sidebarOpen)}
+        />
+      </div>
+      <div
+        className={`app-body ${
+          props.sidebarOpen ? 'open-sidebar' : 'closed-sidebar'
+        }`}
+      >
+        <div className="app-sidebar-container">{sidebar}</div>
+        <div className="app-main-container">{main}</div>
+      </div>
+    </div>
+  )}
+/>
+```
+
+3.  In `AppProvider.js`, we will need to update the component to call the given render function and pass the required content. You'll need to import the Sidebar file and we can create some content for the main body.
+
+```
+import { Sidebar } from './Sidebar';
+
+return props.render({
+  sidebar: <Sidebar />,
+  main: (
+    <section>
+      <h1>Welcome</h1>
+      <p>Main content will go here</p>
+    </section>
+  ),
+});
+```
+
+3b. You will also need to pass through the render function from the `AppProvider` component into the `App` component.
+
+```
+<App render={this.props.render} />
+```
+
+_We separate these components into two (`App` and `AppProvider`) for code readability. Later on, we will also need `AppProvider` to accept some state from the app package and store it within its own package._
+
+---
+
+###### We have now created a standard layout within our app package that will change the contents of the sidebar and main body based on the AppProvider that is loaded. We will later update the app package to dynamically select an AppProvider to use based on which kapp is the current kapp.
+
+Please proceed to Step 2. The code in the `step/2` branch has all of the above exercises completed.
