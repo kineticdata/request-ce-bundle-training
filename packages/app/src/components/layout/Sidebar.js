@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Link } from '@reach/router';
+import { Link } from 'react-router-dom';
 import { Nav, NavItem } from 'reactstrap';
 import { selectVisibleKapps } from 'common';
 
