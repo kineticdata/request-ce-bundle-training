@@ -5,39 +5,32 @@ import './assets/styles/master.scss';
 import React from 'react';
 import { connect } from 'react-redux';
 import { compose, lifecycle } from 'recompose';
-import { Link } from 'react-router-dom';
 import { actions } from './redux/modules/app';
+import { actions as layoutActions } from './redux/modules/layout';
+import { Header } from './components/layout/Header';
+import { AppProvider } from './components/layout/AppProvider';
 
 export const AppComponent = props =>
   !props.loading && (
-    <section className="container d-flex flex-column">
-      <h1>{`Welcome ${props.profile.displayName ||
-        props.profile.username}`}</h1>
-      <hr />
-      <div className="mx-3">
-        <h4>{`Space: ${props.space.name}`}</h4>
-        <div className="mx-3">
-          <h5>Kapps</h5>
-          <ul>
-            {props.kapps.map(kapp => (
-              <li key={kapp.slug}>
-                <Link to={`/kapps/${kapp.slug}`}>{kapp.name}</Link>
-              </li>
-            ))}
-          </ul>
-          {props.kapp && (
-            <div>
-              <h5>
-                {`Current Kapp: ${props.kapp.name}`}{' '}
-                <Link to="/" className="btn btn-link text-danger">
-                  <span className="fa fa-times fa-fw" />
-                </Link>
-              </h5>
-            </div>
-          )}
+    <AppProvider
+      render={({ main, sidebar }) => (
+        <div className="app-wrapper">
+          <div className="app-header">
+            <Header
+              toggleSidebar={() => props.setSidebarOpen(!props.sidebarOpen)}
+            />
+          </div>
+          <div
+            className={`app-body ${
+              props.sidebarOpen ? 'open-sidebar' : 'closed-sidebar'
+            }`}
+          >
+            <div className="app-sidebar-container">{sidebar}</div>
+            <div className="app-main-container">{main}</div>
+          </div>
         </div>
-      </div>
-    </section>
+      )}
+    />
   );
 
 export const mapStateToProps = state => ({
@@ -46,10 +39,12 @@ export const mapStateToProps = state => ({
   kapp: state.app.kapp,
   profile: state.app.profile,
   space: state.app.space,
+  sidebarOpen: state.layout.sidebarOpen,
 });
 
 export const mapDispatchToProps = {
   fetchApp: actions.fetchApp,
+  setSidebarOpen: layoutActions.setSidebarOpen,
 };
 
 export const App = compose(
