@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { PageTitle } from '../shared/PageTitle';
+import { PageTitle } from './shared/PageTitle';
 
 export const Catalog = () => {
   return (
