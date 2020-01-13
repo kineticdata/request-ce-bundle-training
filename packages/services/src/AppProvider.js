@@ -8,7 +8,11 @@ import { Catalog } from './components/Catalog';
 const AppComponent = props => {
   return props.render({
     sidebar: <Sidebar />,
-    main: <Catalog />,
+    main: (
+      <main className="package-layout package-layout--services">
+        <Catalog />
+      </main>
+    ),
   });
 };
 
