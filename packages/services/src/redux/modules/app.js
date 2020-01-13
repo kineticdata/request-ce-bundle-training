@@ -9,12 +9,7 @@ export const reducer = (state = {}, action) => {
   if (action.type === types.SYNC_APP_STATE) {
     newState[action.payload.key] = action.payload.value;
   }
-  if (
-    newState.space &&
-    newState.profile &&
-    newState.kappSlug &&
-    newState.layoutSize
-  ) {
+  if (newState.space && newState.profile && newState.kappSlug) {
     newState.ready = true;
   } else {
     newState.ready = false;
