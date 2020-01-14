@@ -1,15 +1,27 @@
 import React, { Fragment } from 'react';
 import { PageTitle } from './shared/PageTitle';
+import { connect } from '../redux/store';
 
-export const Catalog = props => {
+export const CatalogComponent = props => {
   return (
     <Fragment>
       <PageTitle parts={[]} />
       <div className="page-container">
         <div className="page-panel">
-          <div className="page-title">
-            <div className="page-title__wrapper">
-              <h1>Services Package</h1>
+          <div className="page-panel__header">
+            <div className="search-services-home">
+              <div className="search-services-home__wrapper">
+                <h1 className="text-truncate">
+                  Welcome {props.profile.displayName}
+                </h1>
+              </div>
+            </div>
+          </div>
+          <div className="page-panel__body">
+            <div className="page-title">
+              <div className="page-title__wrapper">
+                <h1>{`${props.kapp.name} <${props.kapp.slug}>`}</h1>
+              </div>
             </div>
           </div>
         </div>
@@ -17,3 +29,10 @@ export const Catalog = props => {
     </Fragment>
   );
 };
+
+const mapStateToProps = state => ({
+  kapp: state.app.kapp,
+  profile: state.app.profile,
+});
+
+export const Catalog = connect(mapStateToProps)(CatalogComponent);
