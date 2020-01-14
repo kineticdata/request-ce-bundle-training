@@ -1,6 +1,6 @@
 # Kinetic Bundle Training - Step 2
 
-#### Description
+### Description
 
 By this step, the app package now renders an `AppProvider` which is passed a render function. The `AppProvider` calls that render function and passes to it the content that should be rendered in the sidebar and the main body of the application. This allows us to dynamically load content from different packages.
 
@@ -10,37 +10,37 @@ We have included the structure for a services package with the following directo
 
 - `src`
   - `assets`  
-    <small>Contains the styles for the package.</small>
+    Contains the styles for the package.
   - `components`  
-    <small>Contains the components that will make up the user interface of the application.</small>  
-    <small>_Includes several sample files we will use in the below exercises._</small>
+    Contains the components that will make up the user interface of the application.  
+    _Includes several sample files we will use in the below exercises._
   - `redux`
     - `modules`  
-      <small>Contains the actions and reducers used to interact with the redux store.</small>
+      Contains the actions and reducers used to interact with the redux store.
       - `app.js`  
-        <small>Defines a reducer to store any state passed from the app package into this package's store.</small>
+        Defines a reducer to store any state passed from the app package into this package's store.
     - `sagas`  
-      <small>Contains the sagas which fetch data to be saved in the redux store.</small>
+      Contains the sagas which fetch data to be saved in the redux store.
       - `app.js`  
-        <small>Contains a sample saga that is triggered by the action in the `app.js` module.</small>
+        Contains a sample saga that is triggered by the action in the `app.js` module.
     - `store.js`  
-      <small>File that defines the redux store for this package and exports the connect function we will be using to connect our components to the store.</small>
+      File that defines the redux store for this package and exports the connect function we will be using to connect our components to the store.
     - `reducers.js`  
-      <small>Maps the reducers of this package into the redux store state object.</small>
+      Maps the reducers of this package into the redux store state object.
     - `sagas.js`  
-      <small>Contains the saga watchers for this package.</small>
+      Contains the saga watchers for this package.
   - `AppProvider.js`  
-    <small>The entry point into the package that will be rendered by the app package.</small>
+    The entry point into the package that will be rendered by the app package.
   - `index.js`  
-    <small>Defines the exports of this package, allowing us to import them in other packages directly by the package's name.</small>
+    Defines the exports of this package, allowing us to import them in other packages directly by the package's name.
 - `package.json`  
-  <small>Contains the dependencies for this package and the official name of the package which we will use when importing the `AppProvider` in the app package.</small>
+  Contains the dependencies for this package and the official name of the package which we will use when importing the `AppProvider` in the app package.
 
 The services `AppProvider` imports `Catalog` and `Sidebar` components from the `components` directory, which are very minimal placeholder files.
 
 ---
 
-###### The below exercises will guide you through connecting the services package to the app package.
+##### The below exercises will guide you through connecting the services package to the app package.
 
 We will need to update the app package to dynamically select the correct `AppProvider` to render.
 
@@ -50,17 +50,17 @@ In your space, you will need to have a services kapp with a Bundle Package kapp 
 
 ---
 
-#### Exercise 0
+### Exercise 0
 
 **Import the styles from the services package into the app package.**
 
-This training will not cover creating CSS for the bundle, but let's briefly discuss the structure of our styles. We use Sass to wrtie our styles, which gets compiled into CSS as part of the build process.
+This training will not cover creating CSS for the bundle, but let's briefly discuss the structure of our styles. We use Sass to write our styles, which get compiled into CSS as part of the build process.
 
-Each package has an `assets/styles` directory which contains the styles specific to that package. If you look at `packages/services/src/assets/styles/master.scss`, you will see that the file imports all of the packages style files as descendants of the class `.package-layout--services`. This is to prevent styles from one package from affecting other packages.
+Each package has an `assets/styles` directory which contains the styles specific to that package. If you look at `packages/services/src/assets/styles/master.scss`, you will see that the file imports all of the package's style files as descendants of the class `.package-layout--services`. This is to prevent styles from one package from affecting other packages.
 
 It also imports the styles as descendants of `#root ~ div` which is required to style modals due to where in the dom modals appear. The modal styles will affect other packages, so you will need to be careful to always be specific with your style targets.
 
-Next, if you look at `packages/app/src/assets/styles/master.scss`, you will see that it imports `variables` first, followed by `master.scss` from the common package. The variables file defines various color variables that are use throughout the project. These variables should not get redefined in any other packages in order to allow all the packages to have a uniform look. The common package includes common styles used throughout the bundle. We need to import the `master.scss` file from every package we have directly after the common styles.
+Next, if you look at `packages/app/src/assets/styles/master.scss`, you will see that it imports `variables` first, followed by `master.scss` from the common package. The variables file defines various variables that are used throughout the project. These variables should not get redefined in any other packages in order to allow all the packages to have a uniform look. The common package includes common styles used throughout the bundle. We need to import the `master.scss` file from every package we have directly after the common styles.
 
 1.  Import the services package styles into `packages/app/src/assets/styles/master.scss`.
 
@@ -76,7 +76,7 @@ Lastly, we import the style files from the app package. Importing them last is i
 
 ---
 
-#### Exercise 1
+### Exercise 1
 
 **Modify the app package to dynamically render the appropriate `AppProvider`.**
 
@@ -130,7 +130,7 @@ You should now be able to see the services `AppProvider` rendered when you click
 
 ---
 
-#### Exercise 2
+### Exercise 2
 
 **Pass state from the app package to the `AppProvider`.** In order to not require each package to have to refetch the space, kapp, and profile data, we will pass that data to that `AppProvider` to that each package will receive it. We will also pass a `refreshApp` function to the `AppProvider` that will allow any package to request that the app package refetches the data it passes through.
 
@@ -190,7 +190,7 @@ withHandlers({
 
 ---
 
-#### Exercise 3
+### Exercise 3
 
 **Update the services package `AppProvider` to store the `appState` passed in from the app package.** In order to have access to this state throughout the entire package, we will store it in the package's redux store.
 
@@ -256,7 +256,7 @@ If you use the Redux Developer Tools in the browser to inspect the redux store f
 
 ---
 
-#### Exercise 4
+### Exercise 4
 
 **Update the services package to use the state data passed in from the app package.**
 
@@ -311,6 +311,6 @@ You should now see a banner with your name at the top, and the kapp name and slu
 
 ---
 
-###### We have now updated the app package to dynamically load the correct `AppProvider` based on the current kapp and a mapping of kapp attributes to bundle packages. We've also made the app package pass the data it fetches to the `AppProvider` it loads, and we updated the services package to store that data in its own redux store so it can be used throughout the package. In the next step, we will build out the services package UI by fetching and displaying the categories of the kapp.
+##### We have now updated the app package to dynamically load the correct `AppProvider` based on the current kapp and a mapping of kapp attributes to bundle packages. We've also made the app package pass the data it fetches to the `AppProvider` it loads, and we updated the services package to store that data in its own redux store so it can be used throughout the package. In the next step, we will build out the services package UI by fetching and displaying the categories of the kapp.
 
 Please proceed to Step 3. The code in the `step/3` branch has all of the above exercises completed.
