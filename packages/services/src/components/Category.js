@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react';
-import { connect } from '../../redux/store';
+import { connect } from '../redux/store';
 import { Link } from '@reach/router';
-import { ServiceCard } from '../shared/ServiceCard';
-import { PageTitle } from '../shared/PageTitle';
+import { ServiceCard } from './shared/ServiceCard';
+import { PageTitle } from './shared/PageTitle';
 
 const CategoryComponent = props => (
   <Fragment>
@@ -31,7 +31,7 @@ const CategoryComponent = props => (
 );
 
 const mapStateToProps = (state, props) => ({
-  category: state.categories.find(
+  category: state.categories.data.find(
     category => category.slug === props.categorySlug,
   ),
 });

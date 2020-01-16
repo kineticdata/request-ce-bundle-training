@@ -1,9 +1,9 @@
 import React, { Fragment } from 'react';
-import { connect } from '../../redux/store';
+import { connect } from '../redux/store';
 import { Link } from '@reach/router';
-import { PageTitle } from '../shared/PageTitle';
+import { PageTitle } from './shared/PageTitle';
 
-const CategoryComponent = props => (
+const FormComponent = props => (
   <Fragment>
     <PageTitle parts={[]} />
     <div className="page-container">
@@ -34,12 +34,9 @@ const CategoryComponent = props => (
 );
 
 const mapStateToProps = (state, props) => ({
-  category: state.categories.find(
+  category: state.categories.data.find(
     category => category.slug === props.categorySlug,
   ),
 });
 
-export const Category = connect(
-  mapStateToProps,
-  null,
-)(CategoryComponent);
+export const Form = connect(mapStateToProps)(FormComponent);

@@ -25,7 +25,7 @@ export const CatalogComponent = props => {
             </div>
             {!!props.categories &&
               props.categories.map(category => (
-                <div>
+                <div key={category.slug}>
                   <h3>{category.name}</h3>
                 </div>
               ))}
