@@ -8,7 +8,7 @@ export function* fetchCategoriesRequestSaga() {
 
   const { categories, error } = yield call(fetchCategories, {
     kappSlug,
-    include: 'attributes,categorizations.form',
+    include: 'attributes,categorizations.form,categorizations.form.attributes',
   });
 
   if (error) {

@@ -1,8 +1,6 @@
 import React, { Fragment } from 'react';
-import { compose, lifecycle } from 'recompose';
 import { PageTitle } from './shared/PageTitle';
 import { connect } from '../redux/store';
-import { actions } from '../redux/modules/categories';
 
 export const CatalogComponent = props => {
   return (
@@ -25,24 +23,12 @@ export const CatalogComponent = props => {
                 <h1>{`${props.kapp.name} <${props.kapp.slug}>`}</h1>
               </div>
             </div>
-            {!!props.categoriesError ? (
-              <div className="alert alert-danger">
-                <h4>Error Fetching Categories</h4>
-                <p>{props.categoriesError.message}</p>
-              </div>
-            ) : !!props.categories ? (
+            {!!props.categories &&
               props.categories.map(category => (
                 <div>
                   <h3>{category.name}</h3>
                 </div>
-              ))
-            ) : (
-              <div>
-                <h4 className="text-center">
-                  <span className="fa fa-spinner fa-spin" />
-                </h4>
-              </div>
-            )}
+              ))}
           </div>
         </div>
       </div>
@@ -54,21 +40,6 @@ const mapStateToProps = state => ({
   kapp: state.app.kapp,
   profile: state.app.profile,
   categories: state.categories.data,
-  categoriesError: state.categories.error,
 });
 
-const mapDispatchToProps = {
-  fetchCategories: actions.fetchCategoriesRequest,
-};
-
-export const Catalog = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  lifecycle({
-    componentDidMount() {
-      this.props.fetchCategories();
-    },
-  }),
-)(CatalogComponent);
+export const Catalog = connect(mapStateToProps)(CatalogComponent);

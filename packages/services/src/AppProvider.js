@@ -1,26 +1,51 @@
 import React, { Component } from 'react';
+import { compose, lifecycle } from 'recompose';
 import { Provider } from 'react-redux';
 import { CommonProvider, ErrorUnexpected, Loading } from 'common';
 import { connect, context, store } from './redux/store';
 import { Sidebar } from './components/Sidebar';
 import { Catalog } from './components/Catalog';
 import { syncAppState } from './redux/modules/app';
+import { actions } from './redux/modules/categories';
 import { is } from 'immutable';
 
 const AppComponent = props => {
-  return props.render({
-    sidebar: <Sidebar />,
-    main: (
-      <main className="package-layout package-layout--services">
-        <Catalog />
-      </main>
-    ),
-  });
+  if (!!props.categoriesError) {
+    return <ErrorUnexpected />;
+  } else if (!props.categories) {
+    return <Loading text="App is loading ..." />;
+  } else {
+    return props.render({
+      sidebar: <Sidebar />,
+      main: (
+        <main className="package-layout package-layout--services">
+          <Catalog />
+        </main>
+      ),
+    });
+  }
 };
 
-const mapStateToProps = (state, props) => ({});
+const mapStateToProps = (state, props) => ({
+  categories: state.categories.data,
+  categoriesError: state.categories.error,
+});
 
-export const App = connect(mapStateToProps)(AppComponent);
+const mapDispatchToProps = {
+  fetchCategories: actions.fetchCategoriesRequest,
+};
+
+export const App = compose(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  ),
+  lifecycle({
+    componentDidMount() {
+      this.props.fetchCategories();
+    },
+  }),
+)(AppComponent);
 
 export class AppProvider extends Component {
   constructor(props) {
