@@ -26,8 +26,8 @@ const FormComponent = props => (
             </h3>
             <h1>{props.formSlug}</h1>
           </div>
-          <p>Form needs to be loaded here</p>
         </div>
+        <p>Form needs to be loaded here</p>
       </div>
     </div>
   </Fragment>

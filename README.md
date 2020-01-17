@@ -1,29 +1,29 @@
-# Kinetic Bundle Training - Step 3
+# Kinetic Bundle Training - Step 4
 
 ### Description
 
-By this step, the app package dynamically loads the `AppProvider` from the correct package and passes state data to it. The services package `AppProvider` take the state data from the app package and stores it in its own state to be used throughout the package.
+By this step, the services package is fetching data on load to display the categories. Data is fetched using `redux-saga` and stored in a `redux` store.
 
-In this step, we will build out the home page of the services kapp by fetching and displaying the available categories.
+In this step, we will add routing to the services package and add links between a few different pages.
 
-We have included some placeholder files within the redux folder.
+We have included some files within the package that we will be linking to. The `fetchCategories` call has also been moved from the `Catalog.js` file to the `AppProvider.js` file as the categories list will be used on multiple pages. Fetching it once when the services `App` loads will allow us to not have to refetch the list for each component that uses it.
 
 - `src`
-  - `redux`
-    - `modules`
-      - `categories.js`  
-        We will define our actions and reducer for dealing with the categories state data here.
-    - `sagas`
-      - `categories.js`  
-        We will define our sagas which will do the data fetching here.
+  - `components`
+    - `Category.js`  
+      Page that will show the forms that belong to a specific category.
+    - `Form.js`  
+      Page that will load a specific form (loading of the form will be added in the next step).
+
+We use the library `@reach/router` in our packages to allow for relative links within the package. The `AppProvider` is passed a location from the app package which we will set as the first route path that will load the `App` component of the services package. All nested routes within the package will be relative to this path. This allows us to import the services package and load it at any path, and still have all of its internal links work correctly.
+
+_Although we do use `@reach/router`, we use a forked version of it that has been modified to fix some issues that we ran into. `@reach/router` is no longer being updated, and is having it's functionality implementd within `react-router`, but there is no estimated date of when `react-router` will support relative links._
 
 ---
 
-##### The below exercises will guide you through fetching the kapp's categories using `redux-saga` and storing them in our `redux` store.
+##### The below exercises will guide you through hooking up routing in the services `AppProvider` and adding links within the package to navigate around.
 
-We will also update the `Catalog.js` file to display our categories.
-
-In your space, you will need to have a services kapp with some categories defined.
+In your space, you will need to have a services kapp with some forms defined and added to categories.
 
 **_The changes in all of the below exercises will be to files inside the services package._**
 
@@ -31,202 +31,103 @@ In your space, you will need to have a services kapp with some categories define
 
 ### Exercise 1
 
-**Define the types, actions, default state, and reducer inside the `src/redux/modules/categories.js` file.**
+**Update the `AppProvider` to add routing functionality.**
 
-1.  Define the types that will be used in the actions to fetch categories and set the state. `ns()` is a helper function that you can see defined at the top of the page that prepends a static string to the type name.
+**_The changes in this exercise will be to the `src/AppProvider.js` file._**
+
+1.  Wrap the `App` component with a `LocationProvider`. You will need to import the `LocationProvider`, and also the `connectedHistory` object from the `redux/store.js` file.
 
 ```javascript
-export const types = {
-  FETCH_CATEGORIES_REQUEST: ns('FETCH_CATEGORIES_REQUEST'),
-  FETCH_CATEGORIES_SUCCESS: ns('FETCH_CATEGORIES_SUCCESS'),
-  FETCH_CATEGORIES_FAILURE: ns('FETCH_CATEGORIES_FAILURE'),
-};
+import { LocationProvider } from '@reach/router';
+import { connectedHistory } from './redux/store';
+
+<LocationProvider hashRouting history={connectedHistory}>
+  <App render={this.props.render} />
+</LocationProvider>;
 ```
 
-2.  Define the actions that will be called to update the state and trigger a saga that we will define later to fetch the data. We use some helper functions that build up the action creators and whether they accept a payload or not.
-
-We also use some specific naming conventions to make our bundle code more readable. We name the actions (and types) with the request that we're making (e.g. `fetchCategories` or `updateProfile`), and then suffix it with the word `Request` for the action that will trigger any data reads or writes, and suffix it with `Success` and `Failure` for the calls that will set the appropriate state when the request is completed.
+2.  Wrap the `App` component with a `Router` and set its path to the location provided by the app package. The `Router` component treats its children as route components, rendering the one whose path matches the url. Adding `/*` will match all child urls.
 
 ```javascript
-export const actions = {
-  fetchCategoriesRequest: noPayload(types.FETCH_CATEGORIES_REQUEST),
-  fetchCategoriesSuccess: withPayload(types.FETCH_CATEGORIES_SUCCESS),
-  fetchCategoriesFailure: withPayload(types.FETCH_CATEGORIES_FAILURE),
-};
-```
+import { Router } from '@reach/router';
 
-3.  Define the default state. We use an `immutable` `Record` for storing our state. Our convention is to have a single state variable, `data`, for storing the data and an `error` variable for storing any errors. Occasionally we may also have a `loading` state variable if needed, but we often define loading to be `true` if the data variable is `null`.
-
-```javascript
-export const State = Record({
-  data: null,
-  error: null,
-});
-```
-
-4.  Define the cases for each action type in the reducer.
-
-- Clear the `error` state when we call `fetchCategoriesRequest`. We will leave the data as is so that a refetch will not hide the existing categories.
-
-```javascript
-case types.FETCH_CATEGORIES_REQUEST:
-  return state.set('error', null);
-```
-
-- Set the `data` state with the content of the payload when the request is successful. We use an `immutable` `List` for storing our lists in state.
-
-```javascript
-case types.FETCH_CATEGORIES_REQUEST:
-  return state.set('data', List(payload));
-```
-
-- Set the `error` state with the content of the payload when the request fails. Our api calls return a consistent error object so we just store that object in the state.
-
-```javascript
-case types.FETCH_CATEGORIES_FAILURE:
-  return state.set('error', payload);
+<Router>
+  <App render={this.props.render} path={`${this.props.appState.location}/*`} />
+</Router>;
 ```
 
 ---
 
 ### Exercise 2
 
-**Define the saga to fetch the categories inside the `src/redux/sagas/categories.js` file.**
+**Update `AppComponent` to add a `Router` to the main content.** This is where we will define all of our top level routes within the package.
 
-1.  Import the `fetchCategories` api function from `@kineticdata/react`. This library has functions for all of the kinetic api endpoints, which all return results in a consistent structure and with consistent error objects.
+**_The changes in this exercise will be to the `src/AppProvider.js` file._**
+
+1.  Wrap the contents of the `main` tag with a `Router` and set `Catalog` as the default route.
 
 ```javascript
-import { fetchCategories } from '@kineticdata/react';
+<main className="package-layout package-layout--services">
+  <Router>
+    <Catalog default />
+  </Router>
+</main>
 ```
 
-2.  Implement the `fetchCategoriesRequestSaga` function to retrieve the categories and then call the appropriate success or failure action.
-
-- Get the current kappSlug from the redux store, as we will need it to fetch the categories.
+2.  Add a route to the `Category` component defined in `src/components/Category.js`. This route will expect that a category slug is part of the url, so we will use a route variable in the path. The variable `categorySlug` will be available as a prop inside the `Category` component when it's loaded by this route. We make the path relative by not adding a `/` to the beginning of the path.
 
 ```javascript
-const kappSlug = yield select(state => state.app.kappSlug);
+import { Category } from './components/Category';
+
+<Category path="categories/:categorySlug" />;
 ```
 
-- Call `fetchCategories` to get the data we're looking for. We will also fetch the category attributes, and the forms in this category via the `include` parameter of the api call.
+3.  Add routes to the `Form` component defined in `src/components/Form.js`. We'll allow users to access a form through a category or directly, so we'll need 2 paths. This is achieved by including the component in the router twice, each time with a different path.
 
 ```javascript
-const { categories, error } = yield call(fetchCategories, {
-  kappSlug,
-  include: 'attributes,categorizations.form',
-});
-```
+import { Form } from './components/Form';
 
-- Call the appropriate success or failure action to save the data into the state.
-
-```javascript
-if (error) {
-  yield put(actions.fetchCategoriesFailure(error));
-} else {
-  yield put(actions.fetchCategoriesSuccess(categories));
-}
-```
-
-3.  Implement the `watchCategories` function to trigger the saga whenever the `fetchCategoriesRequest` action is triggered.
-
-```javascript
-export function* watchCategories() {
-  yield takeEvery(types.FETCH_CATEGORIES_REQUEST, fetchCategoriesRequestSaga);
-}
+<Form path="forms/:formSlug" />
+<Form path="categories/:categorySlug/forms/:formSlug" />
 ```
 
 ---
 
 ### Exercise 3
 
-**Connect the reducer and saga watcher to the package middleware.**
+**Update `Catalog` to convert the list of categories into cards that link to the category page.**
 
-1.  Add the categories reducer to the `src/redux/reducers.js` file. This file is connected to the middleware and defines how the state created by the reducer will be accessible in the redux store.
+**_The changes in this exercise will be to the `src/components/Catalog.js` file._**
 
-```javascript
-import categoriesReducer from './modules/categories';
-
-export default {
-  app,
-  categories: categoriesReducer,
-};
-```
-
-2.  Add the categories saga watcher to the `src/redux/sagas.js` file. This file is connected to the middleware, and will run the watch functions to make sure all triggered actions fire their corresponding sagas.
+1.  Replace the list of categories with cards.
 
 ```javascript
-import { watchCategories } from './sagas/categories';
-
-export default function*() {
-  yield all([watchApp(), watchCategories()]);
-}
-```
-
----
-
-### Exercise 4
-
-**Update the `src/components/Catalog.js` file to fetch the categories on load and to display them.**
-
-1.  Fetch the categories by calling the `fetchCategoriesRequest` action in the `componentDidMount` lifecycle, using `recompose` to add the lifecycle method. We will need to add the action to the component props via `mapDispatchToProps`.
-
-```javascript
-import { compose, lifecycle } from 'recompose';
-import { actions } from '../redux/modules/categories';
-
-const mapDispatchToProps = {
-  fetchCategories: actions.fetchCategoriesRequest,
-};
-
-export const Catalog = compose(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  ),
-  lifecycle({
-    componentDidMount() {
-      this.props.fetchCategories();
-    },
-  }),
-)(CatalogComponent);
-```
-
-2.  Add the categories data and error to the props via `mapStateToProps`.
-
-```javascript
-const mapStateToProps = state => ({
-  ...
-  categories: state.categories.data,
-  categoriesError: state.categories.error,
-});
-```
-
-3.  Display the categories within the `CatalogComponent`, after the `.page-title div`. Show an error state if there is an error. Show a loading state if data is `null` and there is no error.
-
-```javascript
-{
-  !!props.categoriesError ? (
-    <div className="alert alert-danger">
-      <h4>Error Fetching Categories</h4>
-      <p>{props.categoriesError.message}</p>
-    </div>
-  ) : !!props.categories ? (
+<div className="cards__wrapper cards__wrapper--thirds">
+  {!!props.categories &&
     props.categories.map(category => (
-      <div>
-        <h3>{category.name}</h3>
+      <div className="card card--category">
+        <h1>{category.name}</h1>
+        <p>{category.description}</p>
+        {category.categorizations.length > 0 && (
+          <p>{category.categorizations.length} Services</p>
+        )}
       </div>
-    ))
-  ) : (
-    <div>
-      <h4 className="text-center">
-        <span className="fa fa-spinner fa-spin" />
-      </h4>
-    </div>
-  );
-}
+    ))}
+</div>
+```
+
+2.  Turn the card `div` into a link that will take the user to the `Category` component which we created a route to in exercise 2. We will need to import the `Link` component. `Link` takes a `to` prop, which is the path we want to go to. We will make it relative to our current location by not starting the path with `/`.
+
+```javascript
+import { Link } from '@reach/router';
+
+<Link to={`categories/${category.slug}`} className="card card--category">
+  // Keep card content the same
+</Link>;
 ```
 
 ---
 
-##### We have now updated the services package to fetch the kapp's categories and display them. This way of fetching data will be used throughout the entire package to interact with all of the data the application has available. In the next step, we will add routing to the services package and add more pages that we can navigate through.
+##### We have now updated the services package to include routing, and added links to navigate within the package to various category and form pages. In the next step, we will use the `CoreForm` component to load Kinetic forms into our bundle.
 
-Please proceed to Step 4. The code in the `step/4` branch has all of the above exercises completed.
+Please proceed to Step 5. The code in the `step/5` branch has all of the above exercises completed.
