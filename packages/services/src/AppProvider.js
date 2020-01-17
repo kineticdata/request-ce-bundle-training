@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { compose, lifecycle } from 'recompose';
 import { Provider } from 'react-redux';
+import { LocationProvider, Router } from '@reach/router';
 import { CommonProvider, ErrorUnexpected, Loading } from 'common';
-import { connect, context, store } from './redux/store';
+import { connectedHistory, connect, context, store } from './redux/store';
 import { Sidebar } from './components/Sidebar';
 import { Catalog } from './components/Catalog';
+import { Category } from './components/Category';
+import { Form } from './components/Form';
 import { syncAppState } from './redux/modules/app';
 import { actions } from './redux/modules/categories';
 import { is } from 'immutable';
+import axios from 'axios';
 
 const AppComponent = props => {
   if (!!props.categoriesError) {
@@ -19,7 +23,12 @@ const AppComponent = props => {
       sidebar: <Sidebar />,
       main: (
         <main className="package-layout package-layout--services">
-          <Catalog />
+          <Router>
+            <Catalog default />
+            <Category path="categories/:categorySlug" />
+            <Form path="forms/:formSlug" />
+            <Form path="categories/:categorySlug/forms/:formSlug" />
+          </Router>
         </main>
       ),
     });
@@ -81,7 +90,14 @@ export class AppProvider extends Component {
       this.state.ready && (
         <Provider store={store} context={context}>
           <CommonProvider>
-            <App render={this.props.render} />
+            <LocationProvider hashRouting history={connectedHistory}>
+              <Router>
+                <App
+                  render={this.props.render}
+                  path={`${this.props.appState.location}/*`}
+                />
+              </Router>
+            </LocationProvider>
           </CommonProvider>
         </Provider>
       )

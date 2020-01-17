@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { Link } from '@reach/router';
 import { PageTitle } from './shared/PageTitle';
 import { connect } from '../redux/store';
 
@@ -23,12 +24,21 @@ export const CatalogComponent = props => {
                 <h1>{`${props.kapp.name} <${props.kapp.slug}>`}</h1>
               </div>
             </div>
-            {!!props.categories &&
-              props.categories.map(category => (
-                <div key={category.slug}>
-                  <h3>{category.name}</h3>
-                </div>
-              ))}
+            <div className="cards__wrapper cards__wrapper--thirds">
+              {!!props.categories &&
+                props.categories.map(category => (
+                  <Link
+                    to={`categories/${category.slug}`}
+                    className="card card--category"
+                  >
+                    <h1>{category.name}</h1>
+                    <p>{category.description}</p>
+                    {category.categorizations.length > 0 && (
+                      <p>{category.categorizations.length} Services</p>
+                    )}
+                  </Link>
+                ))}
+            </div>
           </div>
         </div>
       </div>
