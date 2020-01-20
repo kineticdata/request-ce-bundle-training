@@ -7,11 +7,11 @@ import { connectedHistory, connect, context, store } from './redux/store';
 import { Sidebar } from './components/Sidebar';
 import { Catalog } from './components/Catalog';
 import { Category } from './components/Category';
+import { Requests } from './components/Requests';
 import { Form } from './components/Form';
 import { syncAppState } from './redux/modules/app';
 import { actions } from './redux/modules/categories';
 import { is } from 'immutable';
-import axios from 'axios';
 
 const AppComponent = props => {
   if (!!props.categoriesError) {
@@ -28,6 +28,7 @@ const AppComponent = props => {
             <Category path="categories/:categorySlug" />
             <Form path="forms/:formSlug" />
             <Form path="categories/:categorySlug/forms/:formSlug" />
+            <Requests path="requests" />
           </Router>
         </main>
       ),

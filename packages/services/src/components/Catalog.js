@@ -30,6 +30,7 @@ export const CatalogComponent = props => {
                   <Link
                     to={`categories/${category.slug}`}
                     className="card card--category"
+                    key={category.slug}
                   >
                     <h1>{category.name}</h1>
                     <p>{category.description}</p>
