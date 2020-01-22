@@ -44,7 +44,13 @@ export const RequestsComponent = props => {
                   props.submissions.map(submission => (
                     <tr key={submission.id}>
                       <td>
-                        <Link to={submission.id}>{submission.handle}</Link>
+                        <Link
+                          to={`${submission.id}${
+                            submission.coreState !== 'Draft' ? '/review' : ''
+                          }`}
+                        >
+                          {submission.handle}
+                        </Link>
                       </td>
                       <td>{submission.label}</td>
                       <td>{submission.coreState}</td>
