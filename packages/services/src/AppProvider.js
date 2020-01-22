@@ -28,6 +28,10 @@ const AppComponent = props => {
             <Category path="categories/:categorySlug" />
             <Form path="forms/:formSlug" />
             <Form path="categories/:categorySlug/forms/:formSlug" />
+            <Form path="forms/:formSlug/:submissionId" />
+            <Form path="categories/:categorySlug/forms/:formSlug/:submissionId" />
+            <Form path="requests/:submissionId" />
+            <Form path="requests/:submissionId/review" review={true} />
             <Requests path="requests" />
           </Router>
         </main>
