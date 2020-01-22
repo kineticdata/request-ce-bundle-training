@@ -3,6 +3,7 @@ import {
   Dropdown,
   DropdownToggle,
   DropdownMenu,
+  DropdownItem,
   Navbar,
   Nav,
   NavItem,
@@ -54,6 +55,14 @@ export const HeaderComponent = props => (
                 {kapp.name}
               </Link>
             ))}
+            <DropdownItem divider />
+            <Link
+              className="dropdown-item"
+              to="/settings"
+              onClick={props.kappDropdownToggle}
+            >
+              Settings
+            </Link>
           </DropdownMenu>
         </Dropdown>
       </NavItem>

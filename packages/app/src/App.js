@@ -10,7 +10,9 @@ import { actions as layoutActions } from './redux/modules/layout';
 import { Header } from './components/layout/Header';
 import { AppProvider } from './components/layout/AppProvider';
 import { Utils } from 'common';
+import { matchPath } from 'react-router-dom';
 import ServicesApp from 'services';
+import SettingsApp from 'settings';
 
 // Mapping of Bundle Package kapp attribute values to App Components
 const BUNDLE_PACKAGE_PROVIDERS = {
@@ -24,6 +26,8 @@ const getAppProvider = (kapp, pathname) => {
         Utils.getAttributeValue(kapp, 'Bundle Package', kapp.slug)
       ] || AppProvider
     );
+  } else if (matchPath(pathname, { path: SettingsApp.location })) {
+    return SettingsApp;
   } else {
     return AppProvider;
   }
@@ -34,10 +38,15 @@ export const AppComponent = props =>
     <props.AppProvider
       appState={{
         ...props.app.toObject(),
-        location: `${props.kapp !== null ? `/kapps/${props.kapp.slug}` : '/'}`,
+        location: `${
+          props.kapp !== null
+            ? `/kapps/${props.kapp.slug}`
+            : props.AppProvider.location || '/'
+        }`,
         actions: {
           refreshApp: props.refreshApp,
         },
+        layoutSize: props.layoutSize,
       }}
       render={({ main, sidebar }) => (
         <div className="app-wrapper">
@@ -67,6 +76,8 @@ export const mapStateToProps = state => ({
   space: state.app.space,
   sidebarOpen: state.layout.sidebarOpen,
   app: state.app,
+  pathname: state.router.location.pathname,
+  layoutSize: state.layout.size,
 });
 
 export const mapDispatchToProps = {
@@ -80,7 +91,7 @@ export const App = compose(
     mapDispatchToProps,
   ),
   withProps(props => ({
-    AppProvider: getAppProvider(props.kapp),
+    AppProvider: getAppProvider(props.kapp, props.pathname),
   })),
   withHandlers({
     refreshApp: props => () => props.fetchApp(),
