@@ -88,8 +88,6 @@ You should now see the word "Hello" instead of the word "Welcome" in the banner 
 
 **Load a form translation context.** Each form has its own translation context where we can define translation entries. These contexts are used to group like translations together and to prevent the need to load all translations at once. In order to switch contexts, we can wrap a component or group of code in the `I18n` tag and pass it a `context` prop. This will load the translations for the given context and use them within the wrapped code.
 
-We did not define any translation entries for form contexts, so we will not see any form specific translations. However, all form and custom contexts default to the shared context.
-
 1.  In `src/components/Form.js`, wrap the code that loads the `CoreForm` component with the `I18n` component and pass it the context for the currently loaded form.
 
 ```javascript
@@ -97,6 +95,8 @@ We did not define any translation entries for form contexts, so we will not see 
   // Code to be translated within the form context here
 </I18n>
 ```
+
+We did not define any translation entries for form contexts, so we will not see any form specific translations. However, all form and custom contexts default to the shared context. If you open any form, you should see the Submit button text change to "Submit >>". This is because the value is translate in the shared context. If you translated the Submit key to a different value within a specific form context, it would show that translation instead of the shared one.
 
 Note that some of our routes do not have the `formSlug` in the url and thus the context will be incorrect. To make it work, we'd need to pre-fetch the submission to get the corm slug from it.
 
