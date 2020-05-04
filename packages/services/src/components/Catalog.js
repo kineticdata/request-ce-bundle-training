@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { Link } from '@reach/router';
 import { PageTitle } from './shared/PageTitle';
 import { connect } from '../redux/store';
-import { I18n } from '@kineticdata/react';
 
 export const CatalogComponent = props => {
   return (
@@ -14,7 +13,7 @@ export const CatalogComponent = props => {
             <div className="search-services-home">
               <div className="search-services-home__wrapper">
                 <h1 className="text-truncate">
-                  <I18n>Welcome</I18n> {props.profile.displayName}
+                  Welcome {props.profile.displayName}
                 </h1>
               </div>
             </div>
@@ -22,13 +21,7 @@ export const CatalogComponent = props => {
           <div className="page-panel__body">
             <div className="page-title">
               <div className="page-title__wrapper">
-                <h1>
-                  <I18n
-                    render={translate =>
-                      `${translate(props.kapp.name)} <${props.kapp.slug}>`
-                    }
-                  />
-                </h1>
+                <h1>{`${props.kapp.name} <${props.kapp.slug}>`}</h1>
               </div>
             </div>
             <div className="cards__wrapper cards__wrapper--thirds">

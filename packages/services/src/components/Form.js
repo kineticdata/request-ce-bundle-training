@@ -3,7 +3,7 @@ import { compose, withHandlers, withState } from 'recompose';
 import { connect } from '../redux/store';
 import { Link } from '@reach/router';
 import { PageTitle } from './shared/PageTitle';
-import { CoreForm, I18n } from '@kineticdata/react';
+import { CoreForm } from '@kineticdata/react';
 import { parse } from 'query-string';
 
 const globals = import('common/globals');
@@ -60,27 +60,25 @@ const FormComponent = props => (
             <h1>{props.formName}</h1>
           </div>
         </div>
-        <I18n context={`kapps.${props.kappSlug}.forms.${props.formSlug}`}>
-          {props.submissionId ? (
-            <CoreForm
-              submission={props.submissionId}
-              globals={globals}
-              completed={props.handleCompleted}
-              review={props.review}
-              loaded={props.handleLoaded}
-            />
-          ) : (
-            <CoreForm
-              kapp={props.kappSlug}
-              form={props.formSlug}
-              globals={globals}
-              completed={props.handleCompleted}
-              created={props.handleCreated}
-              loaded={props.handleLoaded}
-              values={props.values}
-            />
-          )}
-        </I18n>
+        {props.submissionId ? (
+          <CoreForm
+            submission={props.submissionId}
+            globals={globals}
+            completed={props.handleCompleted}
+            review={props.review}
+            loaded={props.handleLoaded}
+          />
+        ) : (
+          <CoreForm
+            kapp={props.kappSlug}
+            form={props.formSlug}
+            globals={globals}
+            completed={props.handleCompleted}
+            created={props.handleCreated}
+            loaded={props.handleLoaded}
+            values={props.values}
+          />
+        )}
       </div>
     </div>
   </Fragment>
