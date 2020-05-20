@@ -2,43 +2,18 @@
 
 ### Description
 
-By this step, the services package has routing, data fetching, and loads Kinetic forms.
+By this step, we have completed a number of task.
 
-In this step, we will add translation support to the package. We will use the `I18n` component from the `@kineticdata/react` library to wrap content inside our package to allow it to be translated.
+In this step, we are going to explore some of previous concepts.  We will start by adding a new route.  Using recompose we will dispatch and action.  The action will kick off a redux saga that will fetch records from a datastore.
 
-Translation functionality consists of 2 parts. First, the bundle needs to wrap its text content appropriately to allow translations. Second, translation data needs to exist that maps the wrapped context to its translated values.
-
-The first part we will go over in the below exercises. For the second part, we have included the code for the settings package in this bundle which contains the consoles for adding translation data. In the exercise prologue, we'll briefly go over how to use the console to add translation data.
-
-We've also updated the `packages/app/src/App.js` file to import and use the `AppProvider` from the settings package when the route matches `/settings` (this static location value is defined within the settings package), and added a "Settings" link to the header dropdown menu.
+We will use a helper from the react kinetic lib to assist in fetching the datastore records.  Further building on our understanding 
+of datastores using a custom index to fetch specific records from the datastore.
 
 ---
 
-##### The below exercises will guide you through using the `I18n` component to wrap text so that it can be translated.
+##### The below exercises will guide you through using a custom index to fetch specific records from a datastore.
 
 **_The changes in all of the below exercises will be to files inside the services package._**
-
----
-
-### Exercise Prologue
-
-In order for content to be translated, we need to create translation data to map the content to its translated values. We do this inside the Translations console within Settings (you can access this by clicking on "Settings" in the header menu and then clicking "Translations").
-
-You will first need to define locales into which you would like the content translated. English should already be listed there. We'll skip this step for now and just create English translations.
-
-Below the locales table, you will see translations contexts. A translation context is a grouping of related translation data. The **shared** context is the default context and where the majority of the translation data will exist. However, we also have contexts for each form as well as the ability to create custom contexts. We'll focus on the shared context for this exercise.
-
-If you click on the "Shared Translations" link, you will see a table with keys and translations. This is where we will define some translation data so that we can wrap some text in the services package and see it translated in the below exercises. Please add the following values to the table.
-
-| Locale | Key      | Translation |
-| ------ | -------- | ----------- |
-| en     | Welcome  | Hello       |
-| en     | Services | Requests    |
-| en     | Submit   | Submit >>   |
-
-Now we need to return to the main Translations console screen, and we will see a message stating that "there are new translations waiting to be published". Click that message and the click the "Publish" button in the top right corner of the page. When we add new translation entries, they don't immediately go live. They first need to be published to be used in the bundle.
-
-Now we are ready to start translating content in our services package.
 
 ---
 
