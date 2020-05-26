@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { compose, lifecycle } from 'recompose';
 import { Link } from '@reach/router';
+import { List } from 'immutable';
 import { PageTitle } from './shared/PageTitle';
 import { connect } from '../redux/store';
 import { actions } from '../redux/modules/sites';
@@ -16,10 +17,20 @@ export const SitesComponent = props => {
               <h3>
                 <Link to="..">services</Link> /{' '}
               </h3>
-              <h1>Hello</h1>
+              <h1>Sites</h1>
             </div>
           </div>
-          Body
+          <dl>
+            {props.sites &&
+              props.sites.map(site => (
+                <Fragment>
+                  <dt>
+                    Site: {site['City']}, {site['State']}
+                  </dt>
+                  <dd>Manager: {site['Site Manager']}</dd>
+                </Fragment>
+              ))}
+          </dl>
         </div>
       </div>
     </Fragment>
@@ -27,10 +38,12 @@ export const SitesComponent = props => {
 };
 
 const mapStateToProps = state => ({
-  kapp: state.app.kapp,
-  profile: state.app.profile,
-  submissions: state.submissions.data,
-  submissionsError: state.submissions.error,
+  sites:
+    state.sites.data &&
+    state.sites.data.reduce((acc, site) => {
+      acc = acc.push(site.values);
+      return acc;
+    }, List()),
 });
 
 const mapDispatchToProps = {

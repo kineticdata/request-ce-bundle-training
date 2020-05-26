@@ -11,7 +11,7 @@ export function* fetchSitesSaga() {
       .limit(1000)
       .index('values[State],values[City]')
       .eq('values[State]', 'Minnesota')
-      .eq('values[City]', 'St Paul')
+      .eq('values[City]', 'Minneapolis')
       .include('details,values')
       .build(),
   });
