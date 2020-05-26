@@ -6,58 +6,16 @@ import { PageTitle } from './shared/PageTitle';
 import { connect } from '../redux/store';
 import { actions } from '../redux/modules/sites';
 
-export const SitesComponent = props => {
-  return (
-    <Fragment>
-      <PageTitle parts={[]} />
-      <div className="page-container">
-        <div className="page-panel">
-          <div className="page-title">
-            <div className="page-title__wrapper">
-              <h3>
-                <Link to="..">services</Link> /{' '}
-              </h3>
-              <h1>Sites</h1>
-            </div>
-          </div>
-          <dl>
-            {props.sites &&
-              props.sites.map(site => (
-                <Fragment>
-                  <dt>
-                    Site: {site['City']}, {site['State']}
-                  </dt>
-                  <dd>Manager: {site['Site Manager']}</dd>
-                </Fragment>
-              ))}
-          </dl>
-        </div>
-      </div>
-    </Fragment>
-  );
-};
+export const SitesComponent = props => {};
 
-const mapStateToProps = state => ({
-  sites:
-    state.sites.data &&
-    state.sites.data.reduce((acc, site) => {
-      acc = acc.push(site.values);
-      return acc;
-    }, List()),
-});
+const mapStateToProps = state => ({});
 
-const mapDispatchToProps = {
-  fetchSites: actions.fetchSites,
-};
+const mapDispatchToProps = {};
 
 export const Sites = compose(
   connect(
     mapStateToProps,
     mapDispatchToProps,
   ),
-  lifecycle({
-    componentDidMount() {
-      this.props.fetchSites();
-    },
-  }),
+  lifecycle({}),
 )(SitesComponent);

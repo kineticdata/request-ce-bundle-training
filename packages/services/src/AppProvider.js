@@ -8,7 +8,6 @@ import { Sidebar } from './components/Sidebar';
 import { Catalog } from './components/Catalog';
 import { Category } from './components/Category';
 import { Requests } from './components/Requests';
-import { Sites } from './components/Sites';
 import { Form } from './components/Form';
 import { syncAppState } from './redux/modules/app';
 import { actions } from './redux/modules/categories';
@@ -34,7 +33,6 @@ const AppComponent = props => {
             <Form path="requests/:submissionId" />
             <Form path="requests/:submissionId/review" review={true} />
             <Requests path="requests" />
-            <Sites path="sites" />
           </Router>
         </main>
       ),

@@ -1,4 +1,4 @@
-# Kinetic Bundle Training - Step 6
+# Kinetic Bundle Training - Step 7
 
 ### Description
 
@@ -19,74 +19,190 @@ of datastores using a custom index to fetch specific records from the datastore.
 
 ### Exercise 1
 
-**Translate the "Welcome" text in the top banner of the services package home page.**
+**Create the Sites view.**
 
-**_The changes in this exercise will be to the `src/components/Catalog.js` file._**
+**_The changes in this exercise will be to the `src/components/Sites.js` and `src/AppProvider.js` files._**
 
-1.  Import the `I18n` component from the `@kineticdata/react` library.
-
+1.  Add JSX to the Sites component in the Sites.js file.
 ```javascript
-import { I18n } from '@kineticdata/react';
+  <Fragment>
+    <PageTitle parts={[]} />
+    <div className="page-container">
+      <div className="page-panel">
+        <div className="page-title">
+          <div className="page-title__wrapper">
+            <h3>
+              <Link to="..">services</Link> /{' '}
+            </h3>
+            <h1>Sites</h1>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </Fragment>;
 ```
 
-2.  Wrap the "Welcome" text with the `I18n` component to tell the bundle to translate that value.
-
+2.  Import the Sites component into AppProvider.js file.
 ```javascript
-<h1 className="text-truncate">
-  <I18n>Welcome</I18n> {props.profile.displayName}
-</h1>
+  import { Sites } from './components/Sites';
 ```
 
-You should now see the word "Hello" instead of the word "Welcome" in the banner at the top of the page.
+3.  Add a new route to the AppProvider in AppProvider.js file.
+```javascript
+  <Sites path="sites" />
+```
+* __Note:__ remember that new routes are added between the Router component tags. 
+
+You should now be able to visit #/kapps/services/sites.
 
 ---
 
 ### Exercise 2
 
-**Translate the "Services" kapp name that appears below the top banner.** The kapp name is displayed within a template literal, and we can't use components inside template literals. The `I18n` component can also accept a `render` function as a prop (instead of accepting children content). It will then call this `render` function and provide it with a `translate` function as the first parameter. This allows us to translate parts of strings, or things such as the option values in a select or placeholder values in inputs.
+**Build and export sites types, actions, and reducer.**
 
-**_The changes in this exercise will be to the `src/components/Catalog.js` file._**
+**_The changes in this exercise will be to the `src/redux/modules/sites.js` file._**
 
-1.  Translate the kapp name using the `render` prop of the `I18n` component.
-
+1.  Add types to the types object.
 ```javascript
-<h1>
-  <I18n
-    render={translate => `${translate(props.kapp.name)} <${props.kapp.slug}>`}
-  />
-</h1>
+  FETCH_SITES: ns('FETCH_SITES'),
+  FETCH_SITES_SUCCESS: ns('FETCH_SITES_SUCCESS'),
+  FETCH_SITES_FAILURE: ns('FETCH_SITES_FAILURE'),
+```
+
+2. Add actions to the actions object.
+```javascript
+  fetchSites: noPayload(types.FETCH_SITES),
+  fetchSitesSuccess: withPayload(types.FETCH_SITES_SUCCESS),
+  fetchSitesFailure: withPayload(types.FETCH_SITES_FAILURE),
+```
+
+3. Add reducer cases to the reducer functions.
+```javascript
+  switch (type) {
+    case types.FETCH_SITES:
+      return state.set('error', null);
+    case types.FETCH_SITES_SUCCESS:
+      return state.set('data', List(payload));
+    case types.FETCH_SITES_FAILURE:
+      return state.set('error', payload);
+    default:
+      return state;
+  }
+```
+
+4. Add default export to the bottom of the file.
+```javascript
+  export default reducer;
 ```
 
 ---
 
 ### Exercise 3
 
-**Load a form translation context.** Each form has its own translation context where we can define translation entries. These contexts are used to group like translations together and to prevent the need to load all translations at once. In order to switch contexts, we can wrap a component or group of code in the `I18n` tag and pass it a `context` prop. This will load the translations for the given context and use them within the wrapped code.
+**Add to sites saga.  This exercise assumes there is a `sites` datastore with records. Hard code State and City values to match your dataset.**
 
-1.  In `src/components/Form.js`, wrap the code that loads the `CoreForm` component with the `I18n` component and pass it the context for the currently loaded form.
+**_The changes in this exercise will be to the `src/redux/sagas/sites.js` file._**
 
+1.  Update the `fetchSitesSagas`.  (replace **foo** and **bar** with actual values)
 ```javascript
-<I18n context={`kapps.${props.kappSlug}.forms.${props.formSlug}`}>
-  // Code to be translated within the form context here
-</I18n>
+  const { submissions, error } = yield call(searchSubmissions, {
+    datastore: true,
+    form: 'sites',
+    search: new SubmissionSearch(true)
+      .limit(1000)
+      .index('values[State],values[City]')
+      .eq('values[State]', 'foo')
+      .eq('values[City]', 'bar')
+      .include('details,values')
+      .build(),
+  });
+
+  if (error) {
+    yield put(actions.fetchSitesFailure(error));
+  } else {
+    yield put(actions.fetchSitesSuccess(submissions));
+  }
+```
+__Notes:__ 
+* A submission search to a datastore requires `datastore: true` to be passed.
+* When a `new SubmissionSearch` for a datastore is defined passing `true` is required.
+
+---
+
+### Exercise 4
+
+**Add the sites reducer and saga to the global reducers and sagas**
+
+**_The changes in this exercise will be to the `src/redux/reducers.js` and `src/redux/sagas.js` files._**
+
+1. Import and rename the sites reducer in the reducers.js file.
+```javascript
+  import sitesReducer from './modules/sites';
 ```
 
-We did not define any translation entries for form contexts, so we will not see any form specific translations. However, all form and custom contexts default to the shared context. If you open any form, you should see the Submit button text change to "Submit >>". This is because the value is translate in the shared context. If you translated the Submit key to a different value within a specific form context, it would show that translation instead of the shared one.
+2. Add `sitesReducer` to the default export object in the reducers.js file.
+```javascript
+  sites: sitesReducer
+```
 
-Note that some of our routes do not have the `formSlug` in the url and thus the context will be incorrect. To make it work, we'd need to pre-fetch the submission to get the corm slug from it.
+3. In the sagas.js file import `watchSites` from the sites saga. 
+```javascript
+  import { watchSites } from './sagas/sites';
+```
 
-While this exercise has you wrap the `CoreForm` component in the form context, this step is not required as `CoreForm` will retrieve its own translations. This step would be necessary if we wanted to translate a value within a form context, but display it outside the `CoreForm` component.
+4. Add `watchSites` to the default export function in the sagas.js file.
+```javascript
+watchSites(),
+```
 
 ---
 
-### Exercise Epilogue
+### Exercise 5
 
-The `I18n` component is able to translate these values and is aware of which locale to translate them into because the entire bundle is wrapped in a `KineticLib` component. In the `packages/app/src/index.js` file, you can see a `ConnectedKineticLib` component, which passes the current locale to the `KineticLib` component from the `@kineticdata/react` library. The entire `App` component is then wrapped in the `ConnectedKineticLib`.
+**Fetch sites from the Sites datastore and diplay in the Sites component**
 
-The `KineticLib` component internally uses an `I18nProvider` component which handles fetching the translation data for the necessary contexts and makes it available for the `I18n` component to access.
+**_The changes in this exercise will be to the `src/components/Sites.js` file._**
+
+1. Add to Sites component below the page-title__wrapper closing div.
+```javascript
+  <dl>
+    {props.sites &&
+      props.sites.map(site => (
+        <Fragment>
+          <dt>
+            Site: {site['City']}, {site['State']}
+          </dt>
+          <dd>Manager: {site['Site Manager']}</dd>
+        </Fragment>
+      ))}
+  </dl>
+```
+
+2. Add to `mapStateToProps` function.
+```javascript
+  sites:
+    state.sites.data &&
+    state.sites.data.reduce((acc, site) => {
+      acc = acc.push(site.values);
+      return acc;
+    }, List()),
+```
+* __Note:__ To [return an object from an arrow function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions) wrap object with parentheses. ex () => ({foo: 'bar'})
+
+3. Add `fetchSites` to the `mapDispatchToProps` object. 
+```javascript
+  fetchSites: actions.fetchSites,
+```
+
+4. fetch Sites when the component mounts by adding this to the lifecycle. (Do a search for lifecycle to find where to add)
+```javascript
+    componentDidMount() {
+      this.props.fetchSites();
+    },
+```
 
 ---
 
-##### We have now updated the services package to support translations.
-
-You can view the `develop` branch to see and explore the full kinetic bundle. While the concepts shown in these steps are used to build the packages, the exacpt implementation might vary a bit as it was simplified and pared down for these exercises.
+We have now built out a new view, fetched information from a datastore based on a custom index, and display the information to the user.
