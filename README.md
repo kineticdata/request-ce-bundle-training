@@ -4,7 +4,7 @@
 
 By this step, we have completed a number of task.
 
-In this step, we are going to explore some of previous concepts.  We will start by adding a new route.  Using recompose we will dispatch and action.  The action will kick off a redux saga that will fetch records from a datastore.
+In this step, we are going to explore some of previous concepts.  We will start by adding a new route.  Using recompose we will dispatch an action.  The action will kick off a redux saga that will fetch records from a datastore.
 
 We will use a helper from the react kinetic lib to assist in fetching the datastore records.  Further building on our understanding 
 of datastores using a custom index to fetch specific records from the datastore.
@@ -154,7 +154,7 @@ __Notes:__
 
 4. Add `watchSites` to the default export function in the sagas.js file.
 ```javascript
-watchSites(),
+watchSites()
 ```
 
 ---
