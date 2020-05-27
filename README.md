@@ -43,7 +43,7 @@ import { connectedHistory } from './redux/store';
 
 <LocationProvider hashRouting history={connectedHistory}>
   <App render={this.props.render} />
-</LocationProvider>;
+</LocationProvider>
 ```
 
 2.  Wrap the `App` component with a `Router` and set its path to the location provided by the app package. The `Router` component treats its children as route components, rendering the one whose path matches the url. Adding `/*` will match all child urls.
@@ -53,7 +53,7 @@ import { Router } from '@reach/router';
 
 <Router>
   <App render={this.props.render} path={`${this.props.appState.location}/*`} />
-</Router>;
+</Router>
 ```
 
 ---
