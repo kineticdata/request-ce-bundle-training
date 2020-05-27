@@ -115,7 +115,7 @@ const getAppProvider = kapp => {
 ```javascript
 withProps(props => ({
   AppProvider: getAppProvider(props.kapp),
-}));
+})),
 ```
 
 4.  Update the component to use the `AppProvider` from the props.
@@ -172,7 +172,7 @@ export const mapStateToProps = state => ({
 ```javascript
 withHandlers({
   refreshApp: props => () => props.fetchApp(),
-});
+}),
 ```
 
 5.  Pass an `actions` object which contains the `refreshApp` function to the `AppProvider`.
