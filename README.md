@@ -62,7 +62,7 @@ import { Header } from './components/layout/Header';
 - Use recompose to add state for tracking when the dropdown menu is open, and a handler for toggling the menu.
 
 ```
-withState('kappDropdownOpen', 'setKappDropdownOpen', false)
+withState('kappDropdownOpen', 'setKappDropdownOpen', false),
 withHandlers({ kappDropdownToggle: props => () => props.setKappDropdownOpen(open => !open) })
 ```
 
@@ -185,7 +185,7 @@ import { AppProvider } from './components/layout/AppProvider';
 
 _The above works for replacing the body content, but what we want is to also replace the sidebar content, but keep the sidebar functionality and layout defined within the app package. We will accomplish this by passing a render function to the `AppProvider` which will expect to be called and passed the main content and the sidebar content as parameters._
 
-2.  In `App.js`, update the `App` component to render the `AppProvider`, passing in a `render` prop that's a function. This function will expect to be passed a JS object with the properties `main` and `sidebar`, and will then render the values of those properties within the appropriate sections of the layout.
+2.  In `App.js`, update the `App` component to render the `AppProvider` only. A `render` prop is passed in as a function. This function will expect a JS object with the properties `main` and `sidebar`, and will then render the values of those properties within the appropriate sections of the layout.  Also, notice that the `Header` is rendered within the AppProvider.
 
 ```
 <AppProvider
