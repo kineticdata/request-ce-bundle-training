@@ -221,7 +221,7 @@ const mapStateToProps = state => ({
         <span className="fa fa-spinner fa-spin" />
       </h4>
     </div>
-  );
+  )
 }
 ```
 
