@@ -79,7 +79,7 @@ import { Router } from '@reach/router';
 ```javascript
 import { Category } from './components/Category';
 
-<Category path="categories/:categorySlug" />;
+<Category path="categories/:categorySlug" />
 ```
 
 3.  Add routes to the `Form` component defined in `src/components/Form.js`. We'll allow users to access a form through a category or directly, so we'll need 2 paths. This is achieved by including the component in the router twice, each time with a different path.
@@ -121,7 +121,7 @@ import { Form } from './components/Form';
 ```javascript
 import { Link } from '@reach/router';
 
-<Link to={`categories/${category.slug}`} className="card card--category">
+<Link key={category.slug} to={`categories/${category.slug}`} className="card card--category">
   // Keep card content the same
 </Link>;
 ```
