@@ -139,7 +139,7 @@ Now if you submit a form, you will be redirected to the "My Requests" page.
       globals={globals}
       completed={props.handleCompleted}
     />
-  );
+  )
 }
 ```
 
@@ -222,7 +222,7 @@ export const mapStateToProps = state => ({
 1.  Add component state to store the form name using the `withState` HOC from `recompose`. Make sure to import `withState`. make sure to add this before the `withHandlers` HOC as we will be setting this state in the handlers so we need it to exist first.
 
 ```javascript
-withState('formName', 'setFormName', null);
+withState('formName', 'setFormName', null),
 ```
 
 2.  Create a `handleLoaded` callback function that will set the form name into the `Form` component state.
